@@ -1,0 +1,48 @@
+version: "3.4"
+
+volumes:
+  db:
+
+secrets:
+  dev_ini:
+    file: "./secrets/dev.ini"
+  jwt_cert:
+    file: "./secrets/jwtRS256.rsa"
+  jwt_cert_pub:
+    file: "./secrets/jwtRS256.pub.rsa"
+
+networks:
+  api:
+
+services:
+  mongo:
+    image: mongo:4.0.2
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 12345678
+    volumes:
+      - db:/data/db
+    networks:
+      - api
+
+  api_core:
+    build: .
+    container_name: "api_core"
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - mongo
+    restart: always
+    ports:
+      - 3050:3050
+    volumes:
+      - /usr/app/node_modules
+      - .:/usr/app
+    secrets:
+      - "dev_ini"
+      - "jwt_cert"
+      - "jwt_cert_pub"
+    networks:
+      - api
