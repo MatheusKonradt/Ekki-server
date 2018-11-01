@@ -4,5 +4,9 @@ const schemas = require('../../schemas');
 const Transfer = require('../../../classes/model/Transfer');
 
 module.exports = {
-  
+  createCard: {
+    body: Schema.object({
+      userId: Schema.id().required(),
+    }),
+  },
 };

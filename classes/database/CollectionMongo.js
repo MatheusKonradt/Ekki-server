@@ -13,10 +13,12 @@ class CollectionMongo extends Collection {
 
   /**
    * @param {{}} where
+   * @param {{}} options
    * @returns {Promise<{}>}
    */
-  async find(where) {
+  async find(where, options = {}) {
     const result = await this.col.find(where);
+    if (options.limit) result.limit(options.limit);
     return result.toArray();
   }
 

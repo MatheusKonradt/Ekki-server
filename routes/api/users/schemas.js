@@ -5,13 +5,16 @@ module.exports = {
   getUserById: {
     params: Schema.object({
       userId: Schema.id().required(),
-    }).label('params'),
+    }),
+    query: Schema.object({
+      id: Schema.id(),
+    })
   },
 
   patchUserById: {
     params: Schema.object({
       userId: Schema.id().required(),
-    }).label('params'),
+    }),
 
     body: schemas.patchOperations
   },

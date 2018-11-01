@@ -24,20 +24,6 @@ class Transfer extends Model {
   }
 
   /**
-   * @param {ObjectId} val
-   */
-  set userId(val) {
-    this.data.userId = val;
-  }
-
-  /**
-   * @return {ObjectId}
-   */
-  get userId() {
-    return this.data.userId;
-  }
-
-  /**
    * @param {number} val
    */
   set amount(val) {
@@ -68,38 +54,52 @@ class Transfer extends Model {
   /**
    * @param {ObjectId} val
    */
-  set fromWalletId(val) {
-    this.data.fromWalletId = val;
+  set fromUserId(val) {
+    this.data.fromUserId = val;
   }
 
   /**
    * @return {ObjectId}
    */
-  get fromWalletId() {
-    return this.data.fromWalletId;
+  get fromUserId() {
+    return this.data.fromUserId;
   }
 
   /**
    * @param {ObjectId} val
    */
-  set toWalletId(val) {
-    this.data.toWalletId = val;
+  set toUserId(val) {
+    this.data.toUserId = val;
   }
 
   /**
    * @return {ObjectId}
    */
-  get toWalletId() {
-    return this.data.toWalletId;
+  get toUserId() {
+    return this.data.toUserId;
+  }
+
+  /**
+   * @param {boolean} val
+   */
+  set allowCreditCardUsage(val) {
+    this.data.allowCreditCardUsage = val;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  get allowCreditCardUsage() {
+    return this.data.allowCreditCardUsage;
   }
 }
 
 Transfer.SCHEMA = _.assign({
-  userId: Schema.id().required(),
-  fromWalletId: Schema.id().required(),
-  toWalletId: Schema.id().required(),
+  fromUserId: Schema.id().required(),
+  toUserId: Schema.id().required(),
   amount: Schema.number().integer().required(),
   currency: Schema.enum(Currency).required(),
+  allowCreditCardUsage: Schema.boolean(Currency),
 }, Model.SCHEMA);
 
 module.exports = Transfer;

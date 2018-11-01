@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const sinon = require('sinon');
 const User = require('../../../../../classes/model/User');
 const Authentication = require('../../../../../classes/model/Authentication');
 const EmailVerification = require('../../../../../classes/model/EmailVerification');
@@ -16,6 +17,7 @@ const EmailVerifications = require('../../../../../classes/collection/EmailVerif
 const Users = require('../../../../../classes/collection/Users');
 const EmailVerificationStatus = require('../../../../../classes/enum/EmailVerificationStatus');
 const Actor = require('../../../../../classes/actor/Actor');
+const Email = require('../../../../../classes/Email');
 
 describe('controller', () => {
   describe('#signInWithPassAndEmail', () => {
@@ -87,13 +89,19 @@ describe('controller', () => {
 
   describe('#findOrCreateEmailVerification', () => {
     let app;
+    const sandbox = sinon.createSandbox();
 
     before(async () => {
       app = await helper.createTestApp();
       await new EmailVerifications(app).removeMany({ });
     });
 
+    afterEach(() => {
+      sandbox.restore();
+    });
+
     it('should create a new emailVerification document', async () => {
+      sandbox.stub(Email.prototype, 'send').resolves();
       const email = 'test@mail.abc';
       const response = await controller.findOrCreateEmailVerification(app, email);
       expect(response).to.be.an.instanceOf(Response);

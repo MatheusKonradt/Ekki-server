@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const ErrorFactory = require('../error/ErrorFactory');
 const Command = require('./Command');
-const Wallet = require('../model/Wallet');
+const { Wallet, Card } = require('../model');
 
 class TransferCommand extends Command {
   /**
@@ -32,13 +32,30 @@ class TransferCommand extends Command {
     fromWallet.setSafeLoad(false);
     toWallet.setSafeLoad(false);
 
-    await fromWallet.loadFromDBWithId(transfer.fromWalletId);
-    await toWallet.loadFromDBWithId(transfer.toWalletId);
+    await fromWallet.loadFromDBWithUserId(transfer.fromUserId);
+    await toWallet.loadFromDBWithUserId(transfer.toUserId);
 
-    // TODO normalize currency (BRL, USD, etc)
+    // TODO normalize currency (BRL to USD, etc)
 
     if (fromWallet.amount < transfer.amount) {
-      throw ErrorFactory.notEnoughFounds();
+
+      if (!transfer.allowCreditCardUsage) {
+        throw ErrorFactory.notEnoughFounds();
+      }
+
+      const card = new Card(app);
+      card.setSafeLoad(false);
+      await card.loadFromDBWithUserId(transfer.fromUserId);
+      const lastingLimit = card.limit - card.debit;
+      const missingAmount = transfer.amount - fromWallet.amount;
+
+      if (lastingLimit < missingAmount) {
+        throw ErrorFactory.notEnoughFounds();
+      }
+
+      card.debit += missingAmount;
+      fromWallet.amount += missingAmount;
+      await card.save();
     }
 
     fromWallet.amount -= transfer.amount;

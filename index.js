@@ -4,6 +4,7 @@ const cors = require('@koa/cors');
 const Koa = require('koa');
 const App = require('./classes/App');
 const Env = require('./classes/Env');
+const Email = require('./classes/Email');
 const AuthClaim = require('./classes/AuthClaim');
 const router = require('./routes/router');
 const responseMiddleware = require('./routes/middlewares/response');
@@ -13,6 +14,7 @@ const koa = new Koa();
 const app = new App();
 app.initializeEnvVars(env.ini_file);
 AuthClaim.loadCertFiles(env.jwt, env.jwt_pub);
+Email.initialize(app);
 
 async function waitForAppReadyState(ctx, next) {
   await app.waitForReadyState();

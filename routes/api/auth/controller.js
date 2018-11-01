@@ -11,6 +11,7 @@ const EmailVerificationStatus = require('../../../classes/enum/EmailVerification
 const AuthProvider = require('../../../classes/enum/AuthProvider');
 const Currency = require('../../../classes/enum/Currency');
 const Wallet = require('../../../classes/model/Wallet');
+const Email = require('../../../classes/Email');
 
 module.exports = {
   /**
@@ -108,6 +109,12 @@ module.exports = {
       await emailVerification.save();
     }
 
+    const mailer = new Email();
+    mailer.setRecipient(emailVerification.email);
+    mailer.setSubject('Seu código para entrar no Ekki esta aqui!');
+    mailer.setText(emailVerification.code);
+    await mailer.send();
+
     const response = new Response();
     response.addResource('emailVerification', emailVerification.setFields(['status', 'email']).toJson());
     return response;
@@ -152,7 +159,7 @@ module.exports = {
 
     const wallet = new Wallet(app);
     wallet.currency = Currency.BRL;
-    wallet.amount = 500;
+    wallet.amount = 50000;
     wallet.userId = user.id;
     await wallet.save();
 

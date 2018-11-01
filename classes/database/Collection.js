@@ -8,9 +8,10 @@ class Collection {
   /**
    * @virtual
    * @param {{}} where
+   * @param {{}} options
    * @returns {Promise<{}>}
    */
-  async find(where) { throw ErrorFactory.notImplemented(); }
+  async find(where, options) { throw ErrorFactory.notImplemented(); }
 
   /**
    * @virtual

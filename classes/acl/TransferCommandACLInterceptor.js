@@ -12,15 +12,11 @@ class TransferCommandACLInterceptor extends CommandACLInterceptor {
     const transfer = this.command.getTransfer();
     const actor = this.getActor();
 
-    const fromWallet = new Wallet(app);
-    fromWallet.setSafeLoad(false);
-    await fromWallet.loadFromDBWithId(transfer.fromWalletId);
-
     if (actor.getType() === ActorType.USER) {
-      const ownerId = fromWallet.getResourceOwnerId();
+      const ownerId = transfer.fromUserId;
 
       if (!ownerId || String(ownerId) !== String(actor.getUserId())){
-        throw ErrorFactory.permission(actor, model);
+        throw ErrorFactory.permission(actor, transfer);
       }
     }
 

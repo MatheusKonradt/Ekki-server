@@ -8,6 +8,13 @@ const ActorFactory = require('../../../classes/actor/ActorFactory');
 module.exports = (app) => {
   const router = new KoaRouter({ prefix: '/users' });
 
+  router.get('/', auth({ optional: false }), async (ctx, next) => {
+    const params = schemas.getUserById.query.validate(ctx.request.query);
+    const actor = ActorFactory.getActorInstanceFromAuthClaim(ctx.auth);
+    ctx.body = await controller.getUsersList(app, actor, params);
+    await next();
+  });
+
   router.get('/:userId', auth({ optional: false }), async (ctx, next) => {
     const { userId } = schemas.getUserById.params.validate(ctx.params);
     ctx.body = await controller.getUserById(app, userId);

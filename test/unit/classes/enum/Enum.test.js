@@ -14,9 +14,9 @@ describe('Enum', () => {
       expect(Color.RED).to.be.instanceof(Color);
       expect(Color.BLUE).to.be.instanceof(Color);
       expect(Color.GREEN).to.be.instanceof(Color);
-      expect(String(Color.RED)).to.be.equal('Color.RED');
-      expect(String(Color.BLUE)).to.be.equal('Color.BLUE');
-      expect(String(Color.GREEN)).to.be.equal('Color.GREEN');
+      expect(String(Color.RED)).to.be.equal('RED');
+      expect(String(Color.BLUE)).to.be.equal('BLUE');
+      expect(String(Color.GREEN)).to.be.equal('GREEN');
     });
   });
 });

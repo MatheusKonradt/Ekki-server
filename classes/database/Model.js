@@ -65,6 +65,7 @@ class Model {
    * @return {Promise<boolean>}
    */
   async loadFromDBWithId(id) {
+    if (!id) throw new Error('id is required');
     const document = await this.collection.findById(id);
     if (!document) return false;
     this.setState(Model.STATE_SAVED);
@@ -79,6 +80,7 @@ class Model {
    * @return {Promise<boolean>}
    */
   async loadFromDBWithQuery(query) {
+    if (_.isEmpty(query)) throw new Error('query must not be empty');
     const document = await this.collection.findOne(query);
     if (!document) {
       if (!this.safeLoad) throw ErrorFactory.resourceNotFound();

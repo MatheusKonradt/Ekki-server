@@ -5,7 +5,13 @@ const Transfer = require('../../../classes/model/Transfer');
 
 module.exports = {
   createTransfer: {
-    body: Schema.object(_.pick(Transfer.SCHEMA, ['fromWalletId', 'toWalletId', 'amount', 'currency'])),
+    body: Schema.object(_.pick(Transfer.SCHEMA, ['fromUserId', 'toUserId', 'amount', 'currency', 'allowCreditCardUsage'])),
   },
+
+  listByUserId: {
+    params: Schema.object({
+      userId: Schema.id().required(),
+    }),
+  }
 
 };

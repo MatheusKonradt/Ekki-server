@@ -1,13 +1,27 @@
 const Response = require('../../../classes/api/Response');
 const ErrorFactory = require('../../../classes/error/ErrorFactory');
-const User = require('../../../classes/model/User');
-const Transfer = require('../../../classes/model/Transfer');
 const CommandFactory = require('../../../classes/command/CommandFactory');
 const ACLInterceptorFactory = require('../../../classes/acl/ACLInterceptorFactory');
-const Currency = require('../../../classes/enum/Currency');
-const Status = require('../../../classes/enum/Status');
+const { Currency, Status } = require('../../../classes/enum');
+const { Transfer, User } = require('../../../classes/model');
+const { Transfers } = require('../../../classes/collection');
+
 
 module.exports = {
+
+  /**
+   * @param app
+   * @param actor
+   * @param userId
+   * @return {Promise<Response>}
+   */
+  async listTransfersByUserId(app, actor, userId) { // FIXME missing ACLs
+    const collection = new Transfers(app);
+    const transfers = await collection.findByUserId(userId);
+    const response = new Response();
+    response.addResource('transfers', transfers);
+    return response;
+  },
 
   /**
    * @param {App} app
@@ -19,11 +33,10 @@ module.exports = {
     const transfer = new Transfer(app);
     transfer.amount = data.amount;
     transfer.currency = Currency[data.currency];
-    transfer.fromWalletId = ObjectId(data.fromWalletId);
-    transfer.toWalletId = ObjectId(data.toWalletId);
-    transfer.userId = actor.getUserId();
+    transfer.toUserId = data.toUserId;
+    transfer.fromUserId = data.fromUserId;
+    transfer.allowCreditCardUsage = data.allowCreditCardUsage;
     transfer.status = Status.DRAFTED;
-    await transfer.save();
 
     const command = CommandFactory.getTransferCommand(transfer);
     const aclInterceptor = ACLInterceptorFactory.getCommandACLInterceptorInstance(actor, command);

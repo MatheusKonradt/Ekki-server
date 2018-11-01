@@ -3,8 +3,27 @@ const { ErrorFactory }= require('../../../classes/error');
 const CommandFactory = require('../../../classes/command/CommandFactory');
 const ACLInterceptorFactory = require('../../../classes/acl/ACLInterceptorFactory');
 const { Wallet, Card, User } = require('../../../classes/model');
+const { Users } = require('../../../classes/collection');
 
 module.exports = {
+
+  /**
+   * @param {App} app
+   * @param {Actor} actor
+   * @param {ObjectId} next
+   * @return {Promise<Response>}
+   */
+  async getUsersList(app, actor, { next }) {
+    const collection = new Users(app);
+    const limit = 50;
+    const query = { _id: { $ne: actor.getUserId() } }; // FIXME this query must be abstracted
+    if (next) query._id.$gt = next;
+    const users = await collection.find(query, { limit });
+    const response = new Response();
+    response.addResource('users', users);
+    return response;
+  },
+
   /**
    * @param {App} app
    * @param {ObjectId} userId
